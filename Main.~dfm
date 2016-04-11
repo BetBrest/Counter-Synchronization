@@ -39,4 +39,12 @@ object Form1: TForm1
     Font.Style = []
     ParentFont = False
   end
+  object Button1: TButton
+    Left = 528
+    Top = 280
+    Width = 185
+    Height = 25
+    Caption = #1055#1086#1083#1091#1095#1080#1090#1100
+    TabOrder = 0
+  end
 end
