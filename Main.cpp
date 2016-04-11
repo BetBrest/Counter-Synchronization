@@ -12,5 +12,5 @@ TForm1 *Form1;
 __fastcall TForm1::TForm1(TComponent* Owner)
         : TForm(Owner)
 {
-}
+}      //hello
 //---------------------------------------------------------------------------
