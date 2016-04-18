@@ -22,14 +22,14 @@ void __fastcall TForm1::Button1Click(TObject *Sender)
 {
 
 extern PACKAGE System::TDateTime __fastcall Now(void);
-Edit1->Text = FormatDateTime("hh:nn:ss", Time());
-Edit2->Text = FormatDateTime("dd.mm.yyyy", Date());
+
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::Timer1Timer(TObject *Sender)
 {
-Button1->Click();
+Edit1->Text = FormatDateTime("hh:nn:ss", Time());
+Edit2->Text = FormatDateTime("dd.mm.yyyy", Date());
 }
 //---------------------------------------------------------------------------
-
+                   
