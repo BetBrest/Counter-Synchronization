@@ -21,10 +21,7 @@ __published:	// IDE-managed Components
         TTimer *Timer1;
         TComPort *ComPort1;
         TComLed *ComLed1;
-        TButton *Button2;
         TButton *Button1;
-        TButton *Button3;
-        TButton *Button4;
         void __fastcall Button1Click(TObject *Sender);
         void __fastcall Timer1Timer(TObject *Sender);
         void __fastcall Button2Click(TObject *Sender);

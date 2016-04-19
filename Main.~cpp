@@ -6,6 +6,8 @@
 #include "Main.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
+#pragma link "CPort"
+#pragma link "CPortCtl"
 #pragma resource "*.dfm"
 TForm1 *Form1;
 
@@ -32,4 +34,13 @@ Edit1->Text = FormatDateTime("hh:nn:ss", Time());
 Edit2->Text = FormatDateTime("dd.mm.yyyy", Date());
 }
 //---------------------------------------------------------------------------
-                   
+
+
+
+void __fastcall TForm1::Button2Click(TObject *Sender)
+{
+//Form1->ComLed1->State=True;
+}
+//---------------------------------------------------------------------------
+
+

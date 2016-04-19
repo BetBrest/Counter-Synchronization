@@ -30,8 +30,8 @@
     <USERDEFINES value="_DEBUG"/>
     <SYSDEFINES value="NO_STRICT"/>
     <MAINSOURCE value="Synchronization.cpp"/>
-    <INCLUDEPATH value="&quot;C:\Program Files (x86)\Borland\CBuilder6\Projects&quot;;&quot;E:\GitHub\Counter Synchronization&quot;;$(BCB)\include;$(BCB)\include\vcl;&quot;C:\Program Files (x86)\Borland\CBuilder6\CPORT&quot;"/>
-    <LIBPATH value="$(BCB)\Projects\Lib;&quot;C:\Program Files (x86)\Borland\CBuilder6\Projects&quot;;&quot;E:\GitHub\Counter Synchronization&quot;;$(BCB)\lib\obj;$(BCB)\lib;&quot;C:\Program Files (x86)\Borland\CBuilder6\CPORT&quot;"/>
+    <INCLUDEPATH value="&quot;C:\Program Files (x86)\Borland\CBuilder6\Projects&quot;;&quot;E:\GitHub\Counter Synchronization&quot;;$(BCB)\include;$(BCB)\include\vcl;&quot;C:\Program Files (x86)\Borland\CBuilder6\CPORT&quot;;&quot;C:\Program Files\Borland\CBuilder6\сport&quot;"/>
+    <LIBPATH value="$(BCB)\Projects\Lib;&quot;C:\Program Files (x86)\Borland\CBuilder6\Projects&quot;;&quot;E:\GitHub\Counter Synchronization&quot;;$(BCB)\lib\obj;$(BCB)\lib;&quot;C:\Program Files (x86)\Borland\CBuilder6\CPORT&quot;;&quot;C:\Program Files\Borland\CBuilder6\сport&quot;"/>
     <WARNINGS value="-w-par"/>
     <OTHERFILES value=""/>
   </MACROS>
@@ -39,7 +39,7 @@
     <IDLCFLAGS value="-I&quot;C:\Program Files (x86)\Borland\CBuilder6\Projects&quot; 
       -I&quot;E:\GitHub\Counter Synchronization&quot; -I$(BCB)\include 
       -I$(BCB)\include\vcl -I&quot;C:\Program Files (x86)\Borland\CBuilder6\CPORT&quot; 
-      -src_suffix cpp -D_DEBUG -boa"/>
+      -I&quot;C:\Program Files\Borland\CBuilder6\сport&quot; -src_suffix cpp -D_DEBUG -boa"/>
     <CFLAG1 value="-Od -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k -y -v -vi- -c 
       -tW -tWM"/>
     <PFLAGS value="-$YD -$W -$O- -$A8 -v -JPHNE -M"/>
@@ -91,14 +91,16 @@ ProductVersion=1.0.0.0
 Comments=
 
 [HistoryLists\hlIncludePath]
-Count=2
-Item0=C:\Program Files (x86)\Borland\CBuilder6\Projects;E:\GitHub\Counter Synchronization;$(BCB)\include;$(BCB)\include\vcl;C:\Program Files (x86)\Borland\CBuilder6\CPORT
-Item1=C:\Program Files (x86)\Borland\CBuilder6\Projects;E:\GitHub\Counter Synchronization;$(BCB)\include;$(BCB)\include\vcl
+Count=3
+Item0=C:\Program Files (x86)\Borland\CBuilder6\Projects;E:\GitHub\Counter Synchronization;$(BCB)\include;$(BCB)\include\vcl;C:\Program Files (x86)\Borland\CBuilder6\CPORT;C:\Program Files\Borland\CBuilder6\сport
+Item1=C:\Program Files (x86)\Borland\CBuilder6\Projects;E:\GitHub\Counter Synchronization;$(BCB)\include;$(BCB)\include\vcl;C:\Program Files (x86)\Borland\CBuilder6\CPORT
+Item2=C:\Program Files (x86)\Borland\CBuilder6\Projects;E:\GitHub\Counter Synchronization;$(BCB)\include;$(BCB)\include\vcl
 
 [HistoryLists\hlLibraryPath]
-Count=2
-Item0=$(BCB)\Projects\Lib;C:\Program Files (x86)\Borland\CBuilder6\Projects;E:\GitHub\Counter Synchronization;$(BCB)\lib\obj;$(BCB)\lib;C:\Program Files (x86)\Borland\CBuilder6\CPORT
-Item1=$(BCB)\Projects\Lib;C:\Program Files (x86)\Borland\CBuilder6\Projects;E:\GitHub\Counter Synchronization;$(BCB)\lib\obj;$(BCB)\lib
+Count=3
+Item0=$(BCB)\Projects\Lib;C:\Program Files (x86)\Borland\CBuilder6\Projects;E:\GitHub\Counter Synchronization;$(BCB)\lib\obj;$(BCB)\lib;C:\Program Files (x86)\Borland\CBuilder6\CPORT;C:\Program Files\Borland\CBuilder6\сport
+Item1=$(BCB)\Projects\Lib;C:\Program Files (x86)\Borland\CBuilder6\Projects;E:\GitHub\Counter Synchronization;$(BCB)\lib\obj;$(BCB)\lib;C:\Program Files (x86)\Borland\CBuilder6\CPORT
+Item2=$(BCB)\Projects\Lib;C:\Program Files (x86)\Borland\CBuilder6\Projects;E:\GitHub\Counter Synchronization;$(BCB)\lib\obj;$(BCB)\lib
 
 [HistoryLists\hlDebugSourcePath]
 Count=1

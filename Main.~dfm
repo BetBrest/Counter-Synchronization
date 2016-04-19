@@ -39,32 +39,83 @@ object Form1: TForm1
     Font.Style = []
     ParentFont = False
   end
-  object Button1: TButton
-    Left = 504
-    Top = 304
-    Width = 185
+  object ComLed1: TComLed
+    Left = 120
+    Top = 32
+    Width = 25
     Height = 25
-    Caption = #1055#1086#1083#1091#1095#1080#1090#1100
-    TabOrder = 0
-    OnClick = Button1Click
+    LedSignal = lsConn
+    Kind = lkRedLight
   end
   object Edit1: TEdit
     Left = 344
     Top = 112
     Width = 153
     Height = 24
-    TabOrder = 1
+    TabOrder = 0
   end
   object Edit2: TEdit
     Left = 344
     Top = 160
     Width = 153
     Height = 24
+    TabOrder = 1
+  end
+  object Button2: TButton
+    Left = 504
+    Top = 312
+    Width = 75
+    Height = 25
+    Caption = 'Button2'
     TabOrder = 2
+    OnClick = Button2Click
+  end
+  object Button1: TButton
+    Left = 912
+    Top = 280
+    Width = 75
+    Height = 25
+    Caption = 'Button1'
+    TabOrder = 3
+    OnClick = Button1Click
+  end
+  object Button3: TButton
+    Left = 832
+    Top = 360
+    Width = 75
+    Height = 25
+    Caption = 'Button3'
+    TabOrder = 4
+  end
+  object Button4: TButton
+    Left = 232
+    Top = 304
+    Width = 75
+    Height = 25
+    Caption = 'Button4'
+    TabOrder = 5
   end
   object Timer1: TTimer
     OnTimer = Timer1Timer
     Left = 784
     Top = 40
+  end
+  object ComPort1: TComPort
+    BaudRate = br9600
+    Port = 'COM1'
+    Parity.Bits = prNone
+    StopBits = sbOneStopBit
+    DataBits = dbEight
+    Events = [evRxChar, evTxEmpty, evRxFlag, evRing, evBreak, evCTS, evDSR, evError, evRLSD, evRx80Full]
+    FlowControl.OutCTSFlow = False
+    FlowControl.OutDSRFlow = False
+    FlowControl.ControlDTR = dtrDisable
+    FlowControl.ControlRTS = rtsDisable
+    FlowControl.XonXoffOut = False
+    FlowControl.XonXoffIn = False
+    StoredProps = [spBasic]
+    TriggersOnRxChar = True
+    Left = 72
+    Top = 16
   end
 end
