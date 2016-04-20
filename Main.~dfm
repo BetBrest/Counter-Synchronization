@@ -7,93 +7,68 @@ object Form1: TForm1
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -13
+  Font.Height = -10
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
-  PixelsPerInch = 120
-  TextHeight = 16
+  PixelsPerInch = 96
+  TextHeight = 13
   object Label1: TLabel
-    Left = 40
-    Top = 104
-    Width = 273
-    Height = 37
+    Left = 33
+    Top = 85
+    Width = 248
+    Height = 32
     Caption = #1042#1088#1077#1084#1103' '#1082#1086#1084#1087#1100#1102#1090#1077#1088#1072
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -32
+    Font.Height = -27
     Font.Name = 'MS Sans Serif'
     Font.Style = []
     ParentFont = False
   end
   object Label2: TLabel
-    Left = 40
-    Top = 152
-    Width = 235
-    Height = 37
+    Left = 33
+    Top = 124
+    Width = 210
+    Height = 32
     Caption = #1044#1072#1090#1072' '#1082#1086#1084#1087#1100#1090#1077#1088#1072
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
-    Font.Height = -32
+    Font.Height = -27
     Font.Name = 'MS Sans Serif'
     Font.Style = []
     ParentFont = False
   end
   object ComLed1: TComLed
-    Left = 120
-    Top = 32
-    Width = 25
-    Height = 25
+    Left = 98
+    Top = 26
+    Width = 20
+    Height = 20
     LedSignal = lsConn
     Kind = lkRedLight
   end
   object Edit1: TEdit
-    Left = 344
-    Top = 112
-    Width = 153
+    Left = 280
+    Top = 91
+    Width = 124
     Height = 24
     TabOrder = 0
   end
   object Edit2: TEdit
-    Left = 344
-    Top = 160
-    Width = 153
+    Left = 280
+    Top = 130
+    Width = 124
     Height = 24
     TabOrder = 1
   end
-  object Button2: TButton
-    Left = 504
-    Top = 312
-    Width = 75
-    Height = 25
-    Caption = 'Button2'
-    TabOrder = 2
-    OnClick = Button2Click
-  end
   object Button1: TButton
-    Left = 912
-    Top = 280
-    Width = 75
-    Height = 25
+    Left = 741
+    Top = 228
+    Width = 61
+    Height = 20
     Caption = 'Button1'
-    TabOrder = 3
+    TabOrder = 2
     OnClick = Button1Click
-  end
-  object Button3: TButton
-    Left = 832
-    Top = 360
-    Width = 75
-    Height = 25
-    Caption = 'Button3'
-    TabOrder = 4
-  end
-  object Button4: TButton
-    Left = 232
-    Top = 304
-    Width = 75
-    Height = 25
-    Caption = 'Button4'
-    TabOrder = 5
   end
   object Timer1: TTimer
     OnTimer = Timer1Timer
