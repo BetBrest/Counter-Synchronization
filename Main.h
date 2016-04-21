@@ -22,9 +22,14 @@ __published:	// IDE-managed Components
         TComPort *ComPort1;
         TComLed *ComLed1;
         TButton *Button1;
+        TButton *Button2;
+        TEdit *Edit3;
+        TButton *Button3;
         void __fastcall Button1Click(TObject *Sender);
         void __fastcall Timer1Timer(TObject *Sender);
         void __fastcall Button2Click(TObject *Sender);
+        void __fastcall ComPort1RxChar(TObject *Sender, int Count);
+        void __fastcall Button3Click(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
         __fastcall TForm1(TComponent* Owner);

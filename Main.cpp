@@ -11,6 +11,9 @@
 #pragma resource "*.dfm"
 TForm1 *Form1;
 AnsiString dir;
+unsigned int number;
+unsigned char Mas[256];
+unsigned char ReadTime[] ={0xb9, 0x20, 0x00, 0x00, 0x00, 0x47 } ;
 
 //TDateTime Time_comp = DateTimePicker1->DateTime.FormatString("dd.mm.yyyy");;
 //---------------------------------------------------------------------------
@@ -31,6 +34,7 @@ if (ComPort1->Connected)
    {
      ComPort1->Close();
      if (Button1->Caption == "Закрыть порт" )
+    // ShowMessage("Закрыли порт");
     // ShowMessage("Закрыли порт");
      Button1->Caption = "Открыть порт";
      else
@@ -60,8 +64,23 @@ Edit2->Text = FormatDateTime("dd.mm.yyyy", Date());
 
 void __fastcall TForm1::Button2Click(TObject *Sender)
 {
-//Form1->ComLed1->State=True;
+ComPort1->WriteStr(Edit3->Text) ;
 }
 //---------------------------------------------------------------------------
 
+
+void __fastcall TForm1::ComPort1RxChar(TObject *Sender, int Count)
+{
+      ComPort1->Read(&Mas[number], Count);
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::Button3Click(TObject *Sender)
+{
+    // AnsiString s= ReadTime[0]+ReadTime[1];
+   // ShowMessage(s);
+     ComPort1->Write(ReadTime,6) ;
+}
+//---------------------------------------------------------------------------
 

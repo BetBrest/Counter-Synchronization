@@ -10,6 +10,7 @@
 #pragma link "CPortCtl"
 #pragma resource "*.dfm"
 TForm1 *Form1;
+AnsiString dir;
 
 //TDateTime Time_comp = DateTimePicker1->DateTime.FormatString("dd.mm.yyyy");;
 //---------------------------------------------------------------------------
@@ -23,7 +24,28 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 void __fastcall TForm1::Button1Click(TObject *Sender)
 {
 
-extern PACKAGE System::TDateTime __fastcall Now(void);
+
+//extern PACKAGE System::TDateTime __fastcall Now(void);
+
+if (ComPort1->Connected)
+   {
+     ComPort1->Close();
+     if (Button1->Caption == "Закрыть порт" )
+    // ShowMessage("Закрыли порт");
+    // ShowMessage("Закрыли порт");
+     Button1->Caption = "Открыть порт";
+     else
+     ShowMessage("Порт уже окрыт");
+   }
+  else
+   { ComPort1->Open();
+     ComPort1->ShowSetupDialog();
+     dir = GetCurrentDir();
+     ComPort1->StoreSettings(stIniFile, dir + "\\PortSettings.ini");
+     Button1->Caption="Закрыть порт" ;
+
+   }
+
 
 }
 //---------------------------------------------------------------------------
