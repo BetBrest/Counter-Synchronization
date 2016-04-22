@@ -40,8 +40,8 @@ object Form1: TForm1
     ParentFont = False
   end
   object ComLed1: TComLed
-    Left = 178
-    Top = 58
+    Left = 162
+    Top = 42
     Width = 20
     Height = 20
     LedSignal = lsConn
@@ -70,7 +70,33 @@ object Form1: TForm1
     TabOrder = 2
     OnClick = Button1Click
   end
+  object Button2: TButton
+    Left = 416
+    Top = 160
+    Width = 121
+    Height = 25
+    Caption = #1055#1086#1089#1083#1072#1090#1100' '#1089#1090#1088#1086#1082#1091
+    TabOrder = 3
+    OnClick = Button2Click
+  end
+  object Edit3: TEdit
+    Left = 176
+    Top = 160
+    Width = 217
+    Height = 21
+    TabOrder = 4
+  end
+  object Button3: TButton
+    Left = 416
+    Top = 200
+    Width = 129
+    Height = 25
+    Caption = #1057#1095#1080#1090#1072#1090#1100'  '#1074#1088#1077#1084#1103
+    TabOrder = 5
+    OnClick = Button3Click
+  end
   object Timer1: TTimer
+    Enabled = False
     OnTimer = Timer1Timer
     Left = 784
     Top = 40
@@ -90,6 +116,7 @@ object Form1: TForm1
     FlowControl.XonXoffIn = False
     StoredProps = [spBasic]
     TriggersOnRxChar = True
+    OnRxChar = ComPort1RxChar
     Left = 104
     Top = 40
   end
