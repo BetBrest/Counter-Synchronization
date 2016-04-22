@@ -11,8 +11,10 @@
 #pragma resource "*.dfm"
 TForm1 *Form1;
 AnsiString dir;
+bool new_paket=true;
+unsigned int read_byte;
 unsigned int number;
-unsigned char Mas[256];
+unsigned char in_buffer[256], out_buffer[256],work_buffer[256];
 unsigned char ReadTime[] ={0xb9, 0x20, 0x00, 0x00, 0x00, 0x47 } ;
 
 //TDateTime Time_comp = DateTimePicker1->DateTime.FormatString("dd.mm.yyyy");;
@@ -64,14 +66,40 @@ Edit2->Text = FormatDateTime("dd.mm.yyyy", Date());
 
 void __fastcall TForm1::Button2Click(TObject *Sender)
 {
-ComPort1->WriteStr(Edit3->Text) ;
+//ComPort1->WriteStr(Edit3->Text) ;
 }
 //---------------------------------------------------------------------------
 
 
 void __fastcall TForm1::ComPort1RxChar(TObject *Sender, int Count)
 {
-      ComPort1->Read(&Mas[number], Count);
+     if (new_paket==true)
+     {
+     new_paket =false;
+     read_byte=0;
+     }
+
+     if ((read_byte+Count)>20)
+     {
+     ComPort1->ClearBuffer(true, true);
+     ShowMessage("Переполнение буффера");
+     new_paket = true; return;
+     }
+
+     ComPort1->Read(&work_buffer[read_byte], Count);
+
+     read_byte+=Count;
+
+     if (read_byte==9)   // answer on request
+     {
+     memcpy(&in_buffer[0],&work_buffer[0],read_byte);
+     packet_parsing(&in_buffer[0],read_byte);
+     new_paket =true;
+
+     ShowMessage("Пакет  принят");
+     }
+      
+
 
 }
 //---------------------------------------------------------------------------
@@ -81,6 +109,43 @@ void __fastcall TForm1::Button3Click(TObject *Sender)
     // AnsiString s= ReadTime[0]+ReadTime[1];
    // ShowMessage(s);
      ComPort1->Write(ReadTime,6) ;
+}
+//---------------------------------------------------------------------------
+
+
+
+
+
+
+void __fastcall TForm1::packet_parsing(unsigned char* s, int d)
+ {
+ TDateTime CounterTime,Time_now ;
+;
+
+ //Get Time/Date Counter
+ AnsiString sec=IntToHex(s[0],2);
+ AnsiString min=IntToHex(s[1],2);
+ AnsiString hour=IntToHex(s[2],2);
+ AnsiString day=IntToHex(s[4],2);
+ AnsiString month=IntToHex(s[5],2);
+ AnsiString year=IntToHex(s[6],2);
+
+ AnsiString ss;
+
+ ss = day+ "."  + month + "." + year + " " + hour + ":" + min + ":" + sec;
+ CounterTime=StrToDateTime(ss);
+
+ Edit4->Text=CounterTime.TimeString();
+ Edit5->Text=CounterTime.DateString();
+ double difference=Time_now.CurrentDateTime() - CounterTime ;
+  Edit6->Text=difference;
+//ShowMessage(CounterTime);
+
+}
+void __fastcall TForm1::Button4Click(TObject *Sender)
+{
+unsigned char test[9] = {0x12,0x08,0x19,0x15,0x22,0x04,0x16,0x89,0x23};
+  Form1->packet_parsing(test,9);
 }
 //---------------------------------------------------------------------------
 
