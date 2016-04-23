@@ -43,6 +43,7 @@ public:		// User declarations
         __fastcall TForm1(TComponent* Owner);
 
         void __fastcall packet_parsing(unsigned char*, int);
+        char* MakeCRC(char*);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;

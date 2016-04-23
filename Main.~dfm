@@ -76,14 +76,14 @@ object Form1: TForm1
     Left = 345
     Top = 112
     Width = 152
-    Height = 21
+    Height = 24
     TabOrder = 0
   end
   object Edit2: TEdit
     Left = 345
     Top = 160
     Width = 152
-    Height = 21
+    Height = 24
     TabOrder = 1
   end
   object Button1: TButton
@@ -117,28 +117,28 @@ object Form1: TForm1
     Left = 512
     Top = 108
     Width = 149
-    Height = 21
+    Height = 24
     TabOrder = 5
   end
   object Edit5: TEdit
     Left = 512
     Top = 158
     Width = 149
-    Height = 21
+    Height = 24
     TabOrder = 6
   end
   object Edit6: TEdit
     Left = 699
     Top = 108
     Width = 149
-    Height = 21
+    Height = 24
     TabOrder = 7
   end
   object Edit7: TEdit
     Left = 699
     Top = 158
     Width = 149
-    Height = 21
+    Height = 24
     TabOrder = 8
   end
   object Button4: TButton

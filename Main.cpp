@@ -97,7 +97,7 @@ void __fastcall TForm1::ComPort1RxChar(TObject *Sender, int Count)
      packet_parsing(&in_buffer[0],read_byte);
      new_paket =true;
 
-     ShowMessage("Пакет  принят");
+     //ShowMessage("Пакет  принят");
      }
       
 
@@ -138,10 +138,15 @@ void __fastcall TForm1::packet_parsing(unsigned char* s, int d)
 
  Edit4->Text=CounterTime.TimeString();
  Edit5->Text=CounterTime.DateString();
+
+
  //double difference=Time_now.CurrentDateTime() - CounterTime ;
   //Edit6->Text=difference;
 Edit7->Text =  FloatToStr(DaysBetween(Time_now.CurrentDateTime(), CounterTime))  ;
 Edit6->Text =  FloatToStr(SecondsBetween(Time_now.CurrentDateTime(), CounterTime))  ;
+
+Edit1->Text = FormatDateTime("hh:nn:ss", Time());
+Edit2->Text = FormatDateTime("dd.mm.yyyy", Date());
 //ShowMessage(CounterTime);
 
 }
@@ -151,10 +156,35 @@ unsigned char test[9] = {0x12,0x16,0x22,0x15,0x22,0x02,0x16,0x89,0x23};
   Form1->packet_parsing(test,9);
   char *Data, *Result;                                       // Declare two strings
 
-   Data = "123453";
-   Result = MakeCRC(Data);                                    // Calculate CRC
-   
-   ShowMessage((BinToHex(StrToInt(*Result),2)));
+   Data = "1010";
+   Result = MakeCRC(Data);
+ // Result= '0' + Result  ;                                // Calculate CRC
+ //   int i=StrToInt( Result);
+ // char* s ="1010"; itoa
+ // int i= StrToInt(s);
+    // Подготовим места, чтоб на всех хватило...
+   char *Bin=new char[65];
+   char *Hex=new char[17];
+   int tmp;
+   //    Зададим двоичное число:
+   // (11111010101 bin == 7D5 hex == 2005 dec)
+   strcpy(Bin, Data);
+   //     Функция       long strtol(const char *s, char **endptr, int radix)
+   // принимает строку   s   в основании системы счисления, задаваемой
+   // целым значением   radix   и преобразует ее в длинное целое значение,
+   // котрое и возвращает
+   tmp=strtol(Bin, NULL, 2);
+   //     Функция       char * ltoa(long value, char * string, int radix)
+   // принимает длинное целое значение   value   и преобразует к основанию
+   // системы счисления, задаваемому целочисленным значеним   radix,
+   // помещая результат в ASCIIZ-строку   string
+   ltoa(tmp, Hex, 16);
+   ShowMessage(AnsiString(Hex)); // Ну, вот и результат... %)
+   // Почистить на фиг все!!!
+   delete []Bin;
+   delete []Hex;
+
+
 
   // return(0);
 
