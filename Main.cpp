@@ -44,8 +44,8 @@ if (ComPort1->Connected)
      ShowMessage("Порт уже окрыт");
    }
   else
-   { ComPort1->Open();
-     ComPort1->ShowSetupDialog();
+   {
+     ComPort1->ShowSetupDialog();  ComPort1->Open();
      dir = GetCurrentDir();
      ComPort1->StoreSettings(stIniFile, dir + "\\PortSettings.ini");
      Button1->Caption="Закрыть порт" ;
@@ -152,60 +152,58 @@ Edit2->Text = FormatDateTime("dd.mm.yyyy", Date());
 }
 void __fastcall TForm1::Button4Click(TObject *Sender)
 {
-unsigned char test[9] = {0x12,0x16,0x22,0x15,0x22,0x02,0x16,0x89,0x23};
-  Form1->packet_parsing(test,9);
+unsigned char test[9] = {0x12,0x00,0x22,0x15,0x22,0x02,0x16,0x89,0x23};
+     //  delete []test;
+//unsigned char test[1] = {0x0a};
+
+Form1->packet_parsing(test,9); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!вернуть
   char *Data, *Result;                                       // Declare two strings
 
-   Data = "1010";
-   Result = MakeCRC(Data);
- // Result= '0' + Result  ;                                // Calculate CRC
- //   int i=StrToInt( Result);
- // char* s ="1010"; itoa
- // int i= StrToInt(s);
-    // Подготовим места, чтоб на всех хватило...
-   char *Bin=new char[65];
-   char *Hex=new char[17];
-   int tmp;
-   //    Зададим двоичное число:
-   // (11111010101 bin == 7D5 hex == 2005 dec)
-   strcpy(Bin, Data);
-   //     Функция       long strtol(const char *s, char **endptr, int radix)
-   // принимает строку   s   в основании системы счисления, задаваемой
-   // целым значением   radix   и преобразует ее в длинное целое значение,
-   // котрое и возвращает
-   tmp=strtol(Bin, NULL, 2);
-   //     Функция       char * ltoa(long value, char * string, int radix)
-   // принимает длинное целое значение   value   и преобразует к основанию
-   // системы счисления, задаваемому целочисленным значеним   radix,
-   // помещая результат в ASCIIZ-строку   string
-   ltoa(tmp, Hex, 16);
-   ShowMessage(AnsiString(Hex)); // Ну, вот и результат... %)
-   // Почистить на фиг все!!!
-   delete []Bin;
-   delete []Hex;
+  // Data = "0A";
+  Result = MakeCRC(test,9);
 
-
-
-  // return(0);
+ ShowMessage(My_BinToHex(Result));        // Calculate CRC
 
 
 }
 //---------------------------------------------------------------------------
 
 
-char* TForm1::MakeCRC(char *BitString)
+char* TForm1::MakeCRC(char *HexString, int SizeHexString)
 {
 
    static char Res[9];                                 // CRC Result
    char CRC[8];
-   int  i;
+   int  i,j;
    char DoInvert;
-   
-   for (i=0; i<8; ++i)  CRC[i] = 0;                    // Init before calculation
-   
-   for (i=0; i<strlen(BitString); ++i)
+   int SizeBitString=SizeHexString*8;
+   char BitString[256];
+   Byte Byte_1;
+
+
+    for(i=0; i<SizeHexString; i++)
+    {
+      Byte_1=HexString[i];
+      for(j=0; j<8; j++)
+
       {
-      DoInvert = ('1'==BitString[i]) ^ CRC[7];         // XOR required?
+        if((Byte_1 & 1 << j) == 0)
+        BitString[7-j+i*8]=0;
+        else
+        BitString[7-j+i*8]=1;
+      }
+
+      // ShowMessage(BitString);
+
+
+     }
+
+
+   for (i=0; i<8; ++i)  CRC[i] = 0;                    // Init before calculation
+
+   for (i=0; i<SizeBitString; ++i)
+      {
+      DoInvert = (1==BitString[i]) ^ CRC[7];         // XOR required?
 
       CRC[7] = CRC[6];
       CRC[6] = CRC[5];
@@ -221,5 +219,33 @@ char* TForm1::MakeCRC(char *BitString)
    Res[8] = 0;                                         // Set string terminator
 
    return(Res);
+
+}
+
+AnsiString TForm1::My_BinToHex(AnsiString Data)
+{
+ // Подготовим места, чтоб на всех хватило...
+   char *Bin=new char[65];
+   char *Hex=new char[17];
+   int tmp;
+   //    Зададим двоичное число:
+   // (11111010101 bin == 7D5 hex == 2005 dec)
+   strcpy(Bin, Data.c_str());
+   //     Функция       long strtol(const char *s, char **endptr, int radix)
+   // принимает строку   s   в основании системы счисления, задаваемой
+   // целым значением   radix   и преобразует ее в длинное целое значение,
+   // котрое и возвращает
+   tmp=strtol(Bin, NULL, 2);
+   //     Функция       char * ltoa(long value, char * string, int radix)
+   // принимает длинное целое значение   value   и преобразует к основанию
+   // системы счисления, задаваемому целочисленным значеним   radix,
+   // помещая результат в ASCIIZ-строку   string
+   ltoa(tmp, Hex, 16);
+  // ShowMessage(AnsiString(Hex)); // Ну, вот и результат... %)
+   // Почистить на фиг все!!!
+   delete []Bin;
+
+   return Hex;
+ //  delete []Hex;
 
 }
