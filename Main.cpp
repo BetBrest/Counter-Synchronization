@@ -27,6 +27,8 @@ unsigned char WriteTime[] ={0xb9, 0x21, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 __fastcall TForm1::TForm1(TComponent* Owner)
         : TForm(Owner)
 {
+
+
 }
 //---------------------------------------------------------------------------
 
@@ -34,26 +36,18 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 void __fastcall TForm1::Button1Click(TObject *Sender)
 {
 
-
-//extern PACKAGE System::TDateTime __fastcall Now(void);
-
 if (ComPort1->Connected)
    {
      ComPort1->Close();
-     if (Button1->Caption == "Закрыть порт" )
-    // ShowMessage("Закрыли порт");
-    // ShowMessage("Закрыли порт");
-     Button1->Caption = "Открыть порт";
-     else
-     ShowMessage("Порт уже окрыт");
    }
   else
    {
-     ComPort1->ShowSetupDialog();  ComPort1->Open();
      dir = GetCurrentDir();
+     ComPort1->LoadSettings(stIniFile, dir + "\\PortSettings.ini");
+      ComPort1->ShowSetupDialog();
+  //  ComPort1->Connected=true; //Open();
+  //
      ComPort1->StoreSettings(stIniFile, dir + "\\PortSettings.ini");
-     Button1->Caption="Закрыть порт" ;
-
    }
 
 
@@ -62,8 +56,8 @@ if (ComPort1->Connected)
 
 void __fastcall TForm1::Timer1Timer(TObject *Sender)
 {
-Edit1->Text = FormatDateTime("hh:nn:ss", Time());
-Edit2->Text = FormatDateTime("dd.mm.yyyy", Date());
+ComPort1->Close();
+Timer1->Enabled=false;
 }
 //---------------------------------------------------------------------------
 
@@ -92,12 +86,10 @@ void __fastcall TForm1::Button2Click(TObject *Sender)   //Write time in counter
   WriteTime[6]=My_IntToHex(Min);
   WriteTime[7]=My_IntToHex(Hour);
   WriteTime[13]= MakeCRC(WriteTime,12);
-
+ComPort1->Open();
 ComPort1->Write(TimeRequest,9);
  Ready_to_start=true ;
-
- //ComPort1->Write(WriteTime,14);
-// Ready_to_start=false;
+ Beep(200, 200 );
 
 }
 //---------------------------------------------------------------------------
@@ -144,6 +136,7 @@ void __fastcall TForm1::ComPort1RxChar(TObject *Sender, int Count)
      Clean_buf(work_buffer,256);
      Time_update=false;
      ShowMessage("Время установлено!");
+      Timer1->Enabled=true;
      new_paket = true;
 
        return;
@@ -160,6 +153,7 @@ void __fastcall TForm1::ComPort1RxChar(TObject *Sender, int Count)
          memcpy(&in_buffer[0],&work_buffer[0],read_byte);
          packet_parsing(&in_buffer[0],read_byte);
          new_paket =true;
+        // ComPort1->Connected=false;
         }
         else  ShowMessage("Неправильная контрольная сумма пакета");
       }
@@ -176,7 +170,10 @@ void __fastcall TForm1::Button3Click(TObject *Sender)
 {
     // AnsiString s= ReadTime[0]+ReadTime[1];
    // ShowMessage(s);
+     ComPort1->Open();
      ComPort1->Write(ReadTime,6) ;
+     Timer1->Enabled=true;
+     Beep(2200, 200 );
 }
 //---------------------------------------------------------------------------
 
@@ -215,25 +212,9 @@ Edit6->Text =  FloatToStr(SecondsBetween(Time_now.CurrentDateTime(), CounterTime
 Edit1->Text = FormatDateTime("hh:nn:ss", Time());
 Edit2->Text = FormatDateTime("dd.mm.yyyy", Date());
 //ShowMessage(CounterTime);
+//ComPort1->Close();
 
 }
-void __fastcall TForm1::Button4Click(TObject *Sender)
-{
-unsigned char test[9] = {0x12,0x00,0x22,0x15,0x22,0x02,0x16,0x89,0x23};
-     //  delete []test;
-//unsigned char test[1] = {0x0a};
-
-Form1->packet_parsing(test,9); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!вернуть
-  char *Data; int Result;                                       // Declare two strings
-
-  // Data = "0A";
-  Result = MakeCRC(test,9);
-
- ShowMessage(Result);        // Calculate CRC
-
-
-}
-//---------------------------------------------------------------------------
 
 
 unsigned int TForm1::MakeCRC(char *HexString, int SizeHexString)
@@ -346,3 +327,10 @@ void TForm1::Clean_buf(char *mas, unsigned int size)
     for(unsigned int i=0;i<size;i++)
     mas[i]=0;    //TODO: Add your source code here
 }
+void __fastcall TForm1::FormCreate(TObject *Sender)
+{
+   dir = GetCurrentDir();
+     ComPort1->LoadSettings(stIniFile, dir + "\\PortSettings.ini");
+}
+//---------------------------------------------------------------------------
+
