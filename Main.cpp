@@ -17,6 +17,7 @@ unsigned int read_byte;
 unsigned int number;
 unsigned char in_buffer[256], out_buffer[256],work_buffer[256];
 unsigned char ReadTime[] ={0xb9, 0x20, 0x00, 0x00, 0x00, 0x47 } ;
+unsigned char WriteTime[] ={0xb9, 0x20, 0x00, 0x00, 0x00, 0x47 } ;
 
 //TDateTime Time_comp = DateTimePicker1->DateTime.FormatString("dd.mm.yyyy");;
 //---------------------------------------------------------------------------
@@ -65,9 +66,20 @@ Edit2->Text = FormatDateTime("dd.mm.yyyy", Date());
 
 
 
-void __fastcall TForm1::Button2Click(TObject *Sender)
+void __fastcall TForm1::Button2Click(TObject *Sender)   //Write time in counter
 {
-//ComPort1->WriteStr(Edit3->Text) ;
+   // Make write packet
+ Word Year, Month, Day, Hour, Min, Sec, MSec;
+  TDateTime dtPresent = Now();
+  DecodeDate(dtPresent, Year, Month, Day);
+
+
+WriteTime[1]=My_IntToHex(Day) ;
+WriteTime[2]=Month;
+WriteTime[3]=Year ;
+
+
+//ComPort1->Write(Edit3->Text) ;
 }
 //---------------------------------------------------------------------------
 
@@ -93,10 +105,19 @@ void __fastcall TForm1::ComPort1RxChar(TObject *Sender, int Count)
 
      if (read_byte==9)   // answer on request
      {
-     memcpy(&in_buffer[0],&work_buffer[0],read_byte);
-     packet_parsing(&in_buffer[0],read_byte);
-     new_paket =true;
-
+     if(work_buffer[7]==0x89)
+     {
+     //ShowMessage("Пакет  принят 89");
+      if(MakeCRC(work_buffer,8)==work_buffer[8])
+        {
+         //ShowMessage(MakeCRC(work_buffer,8));
+         memcpy(&in_buffer[0],&work_buffer[0],read_byte);
+         packet_parsing(&in_buffer[0],read_byte);
+         new_paket =true;
+        }
+        else  ShowMessage("Неправильная контрольная сумма пакета");
+      }
+      else ShowMessage("Неправильный формат пакета");
      //ShowMessage("Пакет  принят");
      }
       
@@ -121,7 +142,7 @@ void __fastcall TForm1::Button3Click(TObject *Sender)
 void __fastcall TForm1::packet_parsing(unsigned char* s, int d)
  {
  TDateTime CounterTime,Time_now ;
-;
+
 
  //Get Time/Date Counter
  AnsiString sec=IntToHex(s[0],2);
@@ -157,22 +178,23 @@ unsigned char test[9] = {0x12,0x00,0x22,0x15,0x22,0x02,0x16,0x89,0x23};
 //unsigned char test[1] = {0x0a};
 
 Form1->packet_parsing(test,9); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!вернуть
-  char *Data, *Result;                                       // Declare two strings
+  char *Data; int Result;                                       // Declare two strings
 
   // Data = "0A";
   Result = MakeCRC(test,9);
 
- ShowMessage(My_BinToHex(Result));        // Calculate CRC
+ ShowMessage(Result);        // Calculate CRC
 
 
 }
 //---------------------------------------------------------------------------
 
 
-char* TForm1::MakeCRC(char *HexString, int SizeHexString)
+unsigned int TForm1::MakeCRC(char *HexString, int SizeHexString)
 {
 
    static char Res[9];                                 // CRC Result
+   unsigned int Result;
    char CRC[8];
    int  i,j;
    char DoInvert;
@@ -218,15 +240,20 @@ char* TForm1::MakeCRC(char *HexString, int SizeHexString)
    for (i=0; i<8; ++i)  Res[7-i] = CRC[i] ? '1' : '0'; // Convert binary to ASCII
    Res[8] = 0;                                         // Set string terminator
 
-   return(Res);
+
+  // return(Res);
+
+   Result= My_BinToHex(Res) ;
+   return(Result);
 
 }
 
-AnsiString TForm1::My_BinToHex(AnsiString Data)
+unsigned int TForm1::My_BinToHex(AnsiString Data)
 {
  // Подготовим места, чтоб на всех хватило...
    char *Bin=new char[65];
    char *Hex=new char[17];
+unsigned   char answer;
    int tmp;
    //    Зададим двоичное число:
    // (11111010101 bin == 7D5 hex == 2005 dec)
@@ -243,9 +270,29 @@ AnsiString TForm1::My_BinToHex(AnsiString Data)
    ltoa(tmp, Hex, 16);
   // ShowMessage(AnsiString(Hex)); // Ну, вот и результат... %)
    // Почистить на фиг все!!!
+   char tmp1[4] = "0x";
+   strcat(tmp1, Hex);
+ 
+    answer=StrToInt(tmp1);
    delete []Bin;
-
-   return Hex;
- //  delete []Hex;
+   delete []Hex;
+   return answer;
+ //
 
 }
+
+unsigned char TForm1::My_IntToHex(int Word2)
+{
+unsigned   char answer;
+ char tmp1[4] = "0x";
+ // char tmp2[1];
+ // tmp2[0] =Word2;
+ //strcat(tmp1, tmp2);
+   tmp1[2]=Word2;
+   tmp1[3]=0;
+ answer=StrToInt(tmp1);
+  return answer;
+
+ }
+
+

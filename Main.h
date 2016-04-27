@@ -43,8 +43,9 @@ public:		// User declarations
         __fastcall TForm1(TComponent* Owner);
 
         void __fastcall packet_parsing(unsigned char*, int);
-        char* MakeCRC(char*,int);
-        AnsiString My_BinToHex(AnsiString);
+        unsigned int MakeCRC(char*,int);
+        unsigned int My_BinToHex(AnsiString);
+        unsigned char My_IntToHex(int);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;
