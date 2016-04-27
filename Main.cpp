@@ -13,11 +13,14 @@
 TForm1 *Form1;
 AnsiString dir;
 bool new_paket=true;
+bool Ready_to_start=false;
+bool Time_update=false;
 unsigned int read_byte;
 unsigned int number;
 unsigned char in_buffer[256], out_buffer[256],work_buffer[256];
 unsigned char ReadTime[] ={0xb9, 0x20, 0x00, 0x00, 0x00, 0x47 } ;
-unsigned char WriteTime[] ={0xb9, 0x20, 0x00, 0x00, 0x00, 0x47 } ;
+unsigned char TimeRequest[] ={0xb9, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7D } ;
+unsigned char WriteTime[] ={0xb9, 0x21, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x55, 0x00 } ;
 
 //TDateTime Time_comp = DateTimePicker1->DateTime.FormatString("dd.mm.yyyy");;
 //---------------------------------------------------------------------------
@@ -69,17 +72,33 @@ Edit2->Text = FormatDateTime("dd.mm.yyyy", Date());
 void __fastcall TForm1::Button2Click(TObject *Sender)   //Write time in counter
 {
    // Make write packet
- Word Year, Month, Day, Hour, Min, Sec, MSec;
+  Word Year, Month, Day, Hour, Min, Sec, MSec;
+  unsigned int Day_Week;
   TDateTime dtPresent = Now();
   DecodeDate(dtPresent, Year, Month, Day);
 
+  WriteTime[9]=My_IntToHex(Day) ;
+  WriteTime[10]=My_IntToHex(Month);
+  WriteTime[11]=My_IntToHex(Year) ;
+  Day_Week=dtPresent.DayOfWeek();
+  if (Day_Week==1)
+   Day_Week=7;
+   else
+   Day_Week--;
+  WriteTime[8]=My_IntToHex(Day_Week);
 
-WriteTime[1]=My_IntToHex(Day) ;
-WriteTime[2]=Month;
-WriteTime[3]=Year ;
+  DecodeTime(dtPresent, Hour, Min, Sec, MSec);
+  WriteTime[5]=My_IntToHex(Sec) ;
+  WriteTime[6]=My_IntToHex(Min);
+  WriteTime[7]=My_IntToHex(Hour);
+  WriteTime[13]= MakeCRC(WriteTime,12);
 
+ComPort1->Write(TimeRequest,9);
+ Ready_to_start=true ;
 
-//ComPort1->Write(Edit3->Text) ;
+ //ComPort1->Write(WriteTime,14);
+// Ready_to_start=false;
+
 }
 //---------------------------------------------------------------------------
 
@@ -90,20 +109,47 @@ void __fastcall TForm1::ComPort1RxChar(TObject *Sender, int Count)
      {
      new_paket =false;
      read_byte=0;
+    // ComPort1->ClearBuffer(true, true);
+     Clean_buf(work_buffer,256) ;
      }
 
      if ((read_byte+Count)>20)
      {
      ComPort1->ClearBuffer(true, true);
+     Clean_buf(work_buffer,256);
      ShowMessage("Переполнение буффера");
-     new_paket = true; return;
+     new_paket = true;
+
+     return;
      }
 
      ComPort1->Read(&work_buffer[read_byte], Count);
 
      read_byte+=Count;
+     if(work_buffer[0]==0x55 && Ready_to_start==true)
+     {
+     ComPort1->ClearBuffer(true, true);
+     Clean_buf(work_buffer,256);
 
-     if (read_byte==9)   // answer on request
+   //  ShowMessage("Yes");
+   Time_update=true;
+     new_paket = true;
+     Ready_to_start=false;
+     ComPort1->Write(WriteTime,14);
+       return;
+     }
+     if(work_buffer[0]==0x55 && Time_update==true)
+     {
+     ComPort1->ClearBuffer(true, true);
+     Clean_buf(work_buffer,256);
+     Time_update=false;
+     ShowMessage("Время установлено!");
+     new_paket = true;
+
+       return;
+     }
+
+     if (read_byte==9)   // answer on  time request
      {
      if(work_buffer[7]==0x89)
      {
@@ -284,15 +330,19 @@ unsigned   char answer;
 unsigned char TForm1::My_IntToHex(int Word2)
 {
 unsigned   char answer;
- char tmp1[4] = "0x";
- // char tmp2[1];
- // tmp2[0] =Word2;
- //strcat(tmp1, tmp2);
-   tmp1[2]=Word2;
-   tmp1[3]=0;
- answer=StrToInt(tmp1);
+AnsiString tmp = "0x";
+ tmp=tmp+Word2;
+
+
+ answer=StrToInt(tmp);
   return answer;
 
  }
 
 
+
+void TForm1::Clean_buf(char *mas, unsigned int size)
+{
+    for(unsigned int i=0;i<size;i++)
+    mas[i]=0;    //TODO: Add your source code here
+}

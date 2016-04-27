@@ -46,6 +46,7 @@ public:		// User declarations
         unsigned int MakeCRC(char*,int);
         unsigned int My_BinToHex(AnsiString);
         unsigned char My_IntToHex(int);
+        void Clean_buf(char*, unsigned int);
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;
