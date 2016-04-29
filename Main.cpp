@@ -80,7 +80,7 @@ void __fastcall TForm1::Button2Click(TObject *Sender)   //Write time in counter
   WriteTime[12]=0x55;
   else
   WriteTime[12]=0xAA;
-
+  Timer2->Enabled=true;
   ComPort1->Open();
   ComPort1->Write(TimeRequest,9);
   Ready_to_start=true ;
@@ -137,6 +137,7 @@ void __fastcall TForm1::ComPort1RxChar(TObject *Sender, int Count)
      ComPort1->ClearBuffer(true, true);
      Clean_buf(work_buffer,256);
      Time_update=false;
+     Timer2->Enabled=false;
      ShowMessage("Время установлено!");
       Timer1->Enabled=true;
      new_paket = true;
@@ -154,6 +155,7 @@ void __fastcall TForm1::ComPort1RxChar(TObject *Sender, int Count)
          //ShowMessage(MakeCRC(work_buffer,8));
          memcpy(&in_buffer[0],&work_buffer[0],read_byte);
          packet_parsing(&in_buffer[0],read_byte);
+         Timer2->Enabled=false;
          new_paket =true;
          }
         else  ShowMessage("Неправильная контрольная сумма пакета");
@@ -173,6 +175,7 @@ void __fastcall TForm1::Button3Click(TObject *Sender)
  ComPort1->Write(ReadTime,6) ;
  new_paket=true;
  Timer1->Enabled=true;
+ Timer2->Enabled=true;
  Button3->Enabled=false;
  // Beep(2200, 200 );
 }
@@ -316,4 +319,11 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 }
 //---------------------------------------------------------------------------
 
+
+void __fastcall TForm1::Timer2Timer(TObject *Sender)
+{
+ ShowMessage("Счетчик не отвечает!");
+Timer2->Enabled=false;
+}
+//---------------------------------------------------------------------------
 

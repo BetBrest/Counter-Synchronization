@@ -171,6 +171,7 @@ void __fastcall TForm1::Button3Click(TObject *Sender)
 {
  ComPort1->Open();
  ComPort1->Write(ReadTime,6) ;
+ new_paket=true;
  Timer1->Enabled=true;
  Button3->Enabled=false;
  // Beep(2200, 200 );

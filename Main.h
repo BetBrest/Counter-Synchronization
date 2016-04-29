@@ -33,12 +33,14 @@ __published:	// IDE-managed Components
         TGroupBox *GroupBox1;
         TRadioButton *RadioButton1;
         TRadioButton *RadioButton2;
+        TTimer *Timer2;
         void __fastcall Button1Click(TObject *Sender);
         void __fastcall Timer1Timer(TObject *Sender);
         void __fastcall Button2Click(TObject *Sender);
         void __fastcall ComPort1RxChar(TObject *Sender, int Count);
         void __fastcall Button3Click(TObject *Sender);
         void __fastcall FormCreate(TObject *Sender);
+        void __fastcall Timer2Timer(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
          //void packet_parsing(unsigned char*, int );
