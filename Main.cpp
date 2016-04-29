@@ -12,17 +12,15 @@
 #pragma resource "*.dfm"
 TForm1 *Form1;
 AnsiString dir;
-bool new_paket=true;
-bool Ready_to_start=false;
-bool Time_update=false;
-unsigned int read_byte;
-unsigned int number;
-unsigned char in_buffer[256], out_buffer[256],work_buffer[256];
+bool new_paket=true;  //  read the new package from the port
+bool Ready_to_start=false;//flag counter ready to set the time
+bool Time_update=false; // set time flag
+unsigned int read_byte; // the number of bits read from comport
+unsigned char in_buffer[256], out_buffer[256],work_buffer[256];  //com buffers
 unsigned char ReadTime[] ={0xb9, 0x20, 0x00, 0x00, 0x00, 0x47 } ;
 unsigned char TimeRequest[] ={0xb9, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7D } ;
 unsigned char WriteTime[] ={0xb9, 0x21, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,0x00, 0x00, 0x55, 0x00 } ;
 
-//TDateTime Time_comp = DateTimePicker1->DateTime.FormatString("dd.mm.yyyy");;
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
         : TForm(Owner)
@@ -33,7 +31,7 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 //---------------------------------------------------------------------------
 
 
-void __fastcall TForm1::Button1Click(TObject *Sender)
+void __fastcall TForm1::Button1Click(TObject *Sender)     //Port Settings
 {
 
 if (ComPort1->Connected)
@@ -44,20 +42,17 @@ if (ComPort1->Connected)
    {
      dir = GetCurrentDir();
      ComPort1->LoadSettings(stIniFile, dir + "\\PortSettings.ini");
-      ComPort1->ShowSetupDialog();
-  //  ComPort1->Connected=true; //Open();
-  //
+     ComPort1->ShowSetupDialog();
      ComPort1->StoreSettings(stIniFile, dir + "\\PortSettings.ini");
    }
-
-
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::Timer1Timer(TObject *Sender)
 {
-ComPort1->Close();
-Timer1->Enabled=false;
+ ComPort1->Close();
+ Button3->Enabled=true;
+ Timer1->Enabled=false;
 }
 //---------------------------------------------------------------------------
 
@@ -81,15 +76,21 @@ void __fastcall TForm1::Button2Click(TObject *Sender)   //Write time in counter
    Day_Week--;
   WriteTime[8]=My_IntToHex(Day_Week);
 
+  if(RadioButton1->Checked==true)
+  WriteTime[12]=0x55;
+  else
+  WriteTime[12]=0xAA;
+
+  ComPort1->Open();
+  ComPort1->Write(TimeRequest,9);
+  Ready_to_start=true ;
+
   DecodeTime(dtPresent, Hour, Min, Sec, MSec);
   WriteTime[5]=My_IntToHex(Sec) ;
   WriteTime[6]=My_IntToHex(Min);
   WriteTime[7]=My_IntToHex(Hour);
   WriteTime[13]= MakeCRC(WriteTime,12);
-ComPort1->Open();
-ComPort1->Write(TimeRequest,9);
- Ready_to_start=true ;
- Beep(200, 200 );
+  //Beep(200, 200 );
 
 }
 //---------------------------------------------------------------------------
@@ -116,21 +117,22 @@ void __fastcall TForm1::ComPort1RxChar(TObject *Sender, int Count)
      }
 
      ComPort1->Read(&work_buffer[read_byte], Count);
-
      read_byte+=Count;
-     if(work_buffer[0]==0x55 && Ready_to_start==true)
+
+     if(work_buffer[0]==0x55 && Ready_to_start==true) // answer on  time request to wite
      {
      ComPort1->ClearBuffer(true, true);
      Clean_buf(work_buffer,256);
-
-   //  ShowMessage("Yes");
-   Time_update=true;
+     //  ShowMessage("Yes");
+     Time_update=true;
      new_paket = true;
      Ready_to_start=false;
      ComPort1->Write(WriteTime,14);
        return;
      }
-     if(work_buffer[0]==0x55 && Time_update==true)
+
+
+     if(work_buffer[0]==0x55 && Time_update==true)  // answer on  time write request
      {
      ComPort1->ClearBuffer(true, true);
      Clean_buf(work_buffer,256);
@@ -142,7 +144,7 @@ void __fastcall TForm1::ComPort1RxChar(TObject *Sender, int Count)
        return;
      }
 
-     if (read_byte==9)   // answer on  time request
+     if (read_byte==9)   // answer on  time read request
      {
      if(work_buffer[7]==0x89)
      {
@@ -153,14 +155,13 @@ void __fastcall TForm1::ComPort1RxChar(TObject *Sender, int Count)
          memcpy(&in_buffer[0],&work_buffer[0],read_byte);
          packet_parsing(&in_buffer[0],read_byte);
          new_paket =true;
-        // ComPort1->Connected=false;
-        }
+         }
         else  ShowMessage("Неправильная контрольная сумма пакета");
       }
       else ShowMessage("Неправильный формат пакета");
-     //ShowMessage("Пакет  принят");
+
      }
-      
+
 
 
 }
@@ -168,12 +169,12 @@ void __fastcall TForm1::ComPort1RxChar(TObject *Sender, int Count)
 
 void __fastcall TForm1::Button3Click(TObject *Sender)
 {
-    // AnsiString s= ReadTime[0]+ReadTime[1];
-   // ShowMessage(s);
-     ComPort1->Open();
-     ComPort1->Write(ReadTime,6) ;
-     Timer1->Enabled=true;
-     Beep(2200, 200 );
+ ComPort1->Open();
+ ComPort1->Write(ReadTime,6) ;
+ new_paket=true;
+ Timer1->Enabled=true;
+ Button3->Enabled=false;
+ // Beep(2200, 200 );
 }
 //---------------------------------------------------------------------------
 
@@ -185,7 +186,6 @@ void __fastcall TForm1::Button3Click(TObject *Sender)
 void __fastcall TForm1::packet_parsing(unsigned char* s, int d)
  {
  TDateTime CounterTime,Time_now ;
-
 
  //Get Time/Date Counter
  AnsiString sec=IntToHex(s[0],2);
@@ -203,17 +203,12 @@ void __fastcall TForm1::packet_parsing(unsigned char* s, int d)
  Edit4->Text=CounterTime.TimeString();
  Edit5->Text=CounterTime.DateString();
 
+ Edit7->Text =  FloatToStr(DaysBetween(Time_now.CurrentDateTime(), CounterTime))  ;
+ Edit6->Text =  FloatToStr(SecondsBetween(Time_now.CurrentDateTime(), CounterTime))  ;
 
- //double difference=Time_now.CurrentDateTime() - CounterTime ;
-  //Edit6->Text=difference;
-Edit7->Text =  FloatToStr(DaysBetween(Time_now.CurrentDateTime(), CounterTime))  ;
-Edit6->Text =  FloatToStr(SecondsBetween(Time_now.CurrentDateTime(), CounterTime))  ;
-
-Edit1->Text = FormatDateTime("hh:nn:ss", Time());
-Edit2->Text = FormatDateTime("dd.mm.yyyy", Date());
+ Edit1->Text = FormatDateTime("hh:nn:ss", Time());
+ Edit2->Text = FormatDateTime("dd.mm.yyyy", Date());
 //ShowMessage(CounterTime);
-//ComPort1->Close();
-
 }
 
 
@@ -241,11 +236,8 @@ unsigned int TForm1::MakeCRC(char *HexString, int SizeHexString)
         else
         BitString[7-j+i*8]=1;
       }
-
       // ShowMessage(BitString);
-
-
-     }
+    }
 
 
    for (i=0; i<8; ++i)  CRC[i] = 0;                    // Init before calculation
@@ -267,9 +259,6 @@ unsigned int TForm1::MakeCRC(char *HexString, int SizeHexString)
    for (i=0; i<8; ++i)  Res[7-i] = CRC[i] ? '1' : '0'; // Convert binary to ASCII
    Res[8] = 0;                                         // Set string terminator
 
-
-  // return(Res);
-
    Result= My_BinToHex(Res) ;
    return(Result);
 
@@ -277,13 +266,11 @@ unsigned int TForm1::MakeCRC(char *HexString, int SizeHexString)
 
 unsigned int TForm1::My_BinToHex(AnsiString Data)
 {
- // Подготовим места, чтоб на всех хватило...
    char *Bin=new char[65];
    char *Hex=new char[17];
 unsigned   char answer;
    int tmp;
-   //    Зададим двоичное число:
-   // (11111010101 bin == 7D5 hex == 2005 dec)
+
    strcpy(Bin, Data.c_str());
    //     Функция       long strtol(const char *s, char **endptr, int radix)
    // принимает строку   s   в основании системы счисления, задаваемой
@@ -296,28 +283,22 @@ unsigned   char answer;
    // помещая результат в ASCIIZ-строку   string
    ltoa(tmp, Hex, 16);
   // ShowMessage(AnsiString(Hex)); // Ну, вот и результат... %)
-   // Почистить на фиг все!!!
    char tmp1[4] = "0x";
    strcat(tmp1, Hex);
- 
-    answer=StrToInt(tmp1);
+   answer=StrToInt(tmp1);
    delete []Bin;
    delete []Hex;
    return answer;
- //
-
 }
 
 unsigned char TForm1::My_IntToHex(int Word2)
 {
-unsigned   char answer;
-AnsiString tmp = "0x";
- tmp=tmp+Word2;
+  unsigned   char answer;
 
-
- answer=StrToInt(tmp);
+  AnsiString tmp = "0x";
+  tmp=tmp+Word2;
+  answer=StrToInt(tmp);
   return answer;
-
  }
 
 
@@ -325,12 +306,14 @@ AnsiString tmp = "0x";
 void TForm1::Clean_buf(char *mas, unsigned int size)
 {
     for(unsigned int i=0;i<size;i++)
-    mas[i]=0;    //TODO: Add your source code here
+    mas[i]=0;
 }
+
 void __fastcall TForm1::FormCreate(TObject *Sender)
 {
    dir = GetCurrentDir();
-     ComPort1->LoadSettings(stIniFile, dir + "\\PortSettings.ini");
+   ComPort1->LoadSettings(stIniFile, dir + "\\PortSettings.ini");
 }
 //---------------------------------------------------------------------------
+
 

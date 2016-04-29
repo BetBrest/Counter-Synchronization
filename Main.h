@@ -30,6 +30,9 @@ __published:	// IDE-managed Components
         TEdit *Edit6;
         TEdit *Edit7;
         TLabel *Label5;
+        TGroupBox *GroupBox1;
+        TRadioButton *RadioButton1;
+        TRadioButton *RadioButton2;
         void __fastcall Button1Click(TObject *Sender);
         void __fastcall Timer1Timer(TObject *Sender);
         void __fastcall Button2Click(TObject *Sender);
