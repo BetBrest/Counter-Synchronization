@@ -1107,14 +1107,14 @@ object Form1: TForm1
     Left = 144
     Top = 88
     Width = 123
-    Height = 24
+    Height = 21
     TabOrder = 0
   end
   object Edit2: TEdit
     Left = 144
     Top = 128
     Width = 123
-    Height = 24
+    Height = 21
     TabOrder = 1
   end
   object Button1: TButton
@@ -1148,28 +1148,28 @@ object Form1: TForm1
     Left = 280
     Top = 88
     Width = 121
-    Height = 24
+    Height = 21
     TabOrder = 5
   end
   object Edit5: TEdit
     Left = 280
     Top = 128
     Width = 121
-    Height = 24
+    Height = 21
     TabOrder = 6
   end
   object Edit6: TEdit
     Left = 417
     Top = 88
     Width = 122
-    Height = 24
+    Height = 21
     TabOrder = 7
   end
   object Edit7: TEdit
     Left = 417
     Top = 128
     Width = 122
-    Height = 24
+    Height = 21
     TabOrder = 8
   end
   object GroupBox1: TGroupBox
@@ -1222,6 +1222,13 @@ object Form1: TForm1
     TriggersOnRxChar = True
     OnRxChar = ComPort1RxChar
     Left = 104
+    Top = 16
+  end
+  object Timer2: TTimer
+    Enabled = False
+    Interval = 3000
+    OnTimer = Timer2Timer
+    Left = 152
     Top = 16
   end
 end

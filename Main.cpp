@@ -2,6 +2,7 @@
 
 #include <vcl.h>
 #include <DateUtils.hpp>
+// Программя синхронизации времени для измерона Версия 1.0
 #pragma hdrstop
 
 #include "Main.h"
@@ -147,7 +148,7 @@ void __fastcall TForm1::ComPort1RxChar(TObject *Sender, int Count)
 
      if (read_byte==9)   // answer on  time read request
      {
-     if(work_buffer[7]==0x89)
+     if(work_buffer[7]==0x89 || work_buffer[7]==0x90)
      {
      //ShowMessage("Пакет  принят 89");
       if(MakeCRC(work_buffer,8)==work_buffer[8])

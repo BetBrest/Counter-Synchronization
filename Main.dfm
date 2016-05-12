@@ -1,9 +1,10 @@
 object Form1: TForm1
-  Left = 281
-  Top = 212
-  Width = 790
-  Height = 290
+  Left = 352
+  Top = 221
+  BorderStyle = bsSingle
   Caption = #1055#1088#1086#1075#1088#1072#1084#1084#1072' '#1089#1080#1085#1093#1088#1086#1085#1080#1079#1072#1094#1080#1080' '#1076#1072#1090#1099'/'#1074#1088#1077#1084#1077#1085#1080' '#1089#1095#1077#1090#1095#1080#1082#1072' '#1057#1054#1052'-'#1069'1.1'
+  ClientHeight = 290
+  ClientWidth = 823
   Color = 14215660
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
