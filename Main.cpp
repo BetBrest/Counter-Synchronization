@@ -16,6 +16,7 @@ AnsiString dir;
 bool new_paket=true;  //  read the new package from the port
 bool Ready_to_start=false;//flag counter ready to set the time
 bool Time_update=false; // set time flag
+bool Wrong_format=false; //
 unsigned int read_byte; // the number of bits read from comport
 unsigned char in_buffer[256], out_buffer[256],work_buffer[256];  //com buffers
 unsigned char ReadTime[] ={0xb9, 0x20, 0x00, 0x00, 0x00, 0x47 } ;
@@ -148,7 +149,7 @@ void __fastcall TForm1::ComPort1RxChar(TObject *Sender, int Count)
 
      if (read_byte==9)   // answer on  time read request
      {
-     if(work_buffer[7]==0x89 || work_buffer[7]==0x90)
+    if(1)//work_buffer[7]==0x89 || work_buffer[7]==0x90 )|| work_buffer[7]==0x8F)
      {
      //ShowMessage("Пакет  принят 89");
       if(MakeCRC(work_buffer,8)==work_buffer[8])
@@ -161,7 +162,13 @@ void __fastcall TForm1::ComPort1RxChar(TObject *Sender, int Count)
          }
         else  ShowMessage("Неправильная контрольная сумма пакета");
       }
-      else ShowMessage("Неправильный формат пакета");
+      else
+      {
+      Wrong_format=true;
+     // ShowMessage("Неправильный формат пакета");
+        //  Timer2->Enabled=false;
+       //  new_paket =true;
+        }
 
      }
 
@@ -323,7 +330,14 @@ void __fastcall TForm1::FormCreate(TObject *Sender)
 
 void __fastcall TForm1::Timer2Timer(TObject *Sender)
 {
+   if (Wrong_format)
+ {
+  ShowMessage("Не правильный формат!");
+  Wrong_format =false;
+ }
+ else
  ShowMessage("Счетчик не отвечает!");
+ 
 Timer2->Enabled=false;
 }
 //---------------------------------------------------------------------------
